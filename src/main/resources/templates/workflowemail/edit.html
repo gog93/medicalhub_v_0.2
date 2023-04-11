@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/base.html">
+<head>
+    <title>Edit Workflow Mail</title>
+</head>
+<body>
+
+<div layout:fragment="content" th:remove="tag">
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <h1 class="m-0">Workflow Mail</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 card">
+                    <div class="card-header">
+                        <h3 class="card-title">Compose Mail</h3>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden"  id="emailId" th:value="${mailId}" >
+                        <form th:object="${workflowEmail}"
+                              name="create-workflow-email"
+                              id="create-workflow-email"
+                              method="POST"
+                              th:action="${action}" >
+
+                            <div id="row-type">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="description">Subject</label>
+                                            <input id="description"  th:field="*{subject}"  type="text" class="form-control form-control-sm" placeholder="Subject">
+                                            <p class="text text-danger"
+                                               th:if="${#fields.hasErrors('subject')}"
+                                               th:errors="*{subject}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="emailContent">Mail Content</label>
+                                            <textarea th:field="*{emailContent}" id="emailContent"> </textarea>
+                                            <p class="text text-danger"
+                                               th:if="${#fields.hasErrors('emailContent')}"
+                                               th:errors="*{emailContent}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="attachment">
+                                        <label for="import">
+                                            <img src="/img/Add.png"  width="150px" class="img">
+                                        </label>
+                                        <input th:name="fileName" class="inputAt"  type="file" id="import" hidden />
+                                        <table id="workflowCustomers" class="table">
+                                            <thead>
+
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div></br>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Date and time:</label>
+                                            <div class="input-group date" id="sentAt" data-target-input="nearest">
+                                                <input th:field="*{sentAt}" type="text" class="form-control datetimepicker-input" data-target="#sentAt"/>
+                                                <div class="input-group-append" data-target="#sentAt" data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+</div>
+<th:block layout:fragment="script">
+    <link rel="stylesheet" th:href="@{/plugins/summernote/summernote-bs4.min.css}">
+    <script th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+    <script th:src="@{/plugins/summernote/summernote-bs4.min.js}"></script>
+
+    <script th:src="@{/plugins/moment/moment.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+    <script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+    <script th:inline="javascript">
+
+            $(document).ready(function(){
+                $('#emailContent').summernote({
+                    placeholder: 'Write Email here',
+                    tabsize: 2,
+                    height: 300
+                });
+
+                $('#sentAt').datetimepicker({ icons: { time: 'far fa-clock' } });
+            });
+        </script>
+    <script>
+        $("#import").on("change", function(){
+
+            var formTag = $("#create-workflow-email")[0];
+            var formData = new FormData(formTag);
+            formData.append("file", $(this)[0].files[0]);
+
+
+            $.ajax({
+                url: "/fileUpload",
+                data:formData,
+                type:"post",
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST',
+                success: function() {
+                    loadWorkflowCustomers();
+                },
+                error: function(jqxhr, textStatus, errThrown){
+                    console.log(textStatus);
+                    console.log(errThrown);
+                }
+
+            });
+
+        });
+    </script>
+    <script>
+        function loadWorkflowCustomers() {
+            var id = $('#emailId').val();
+
+            $.ajax({
+                url: '/' + id + '/attachments',
+                type: 'GET',
+                success: function (data) {
+                    var $workflowCustomersTable = $('#workflowCustomers tbody');
+                    $workflowCustomersTable.empty(); // Clear existing rows
+                    $.each(data, function (index, attachment) {
+                        var row = '<tr  th:field="*{mailAttachment}">' +
+                            '<td id="name">' + attachment.fileName + ' ' +
+                            '<button type="button" id="remove" class="btn btn-primary add-customers-btn" data-id="' + attachment.id + '">x</button>' +
+                            '</td>' +
+                            '</tr>';
+                        $workflowCustomersTable.append(row);
+                    });
+                    // Unbind the click event before binding it again
+                    $('.add-customers-btn').off('click').on('click', function() {
+                        var customerId = $(this).data('id');
+                        removeCustomer(customerId);
+                    });
+                },
+                error: function () {
+                }
+            });
+        }
+        $(document).ready(function () {
+            loadWorkflowCustomers();
+        });
+    </script>
+    <script>
+        function removeCustomer(attachmentId) {
+            $.ajax({
+                url:'/change/status/' + attachmentId,
+                type: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (customer) {
+                    loadWorkflowCustomers();
+                },
+                error: function () {
+                    loadWorkflowCustomers();
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>
