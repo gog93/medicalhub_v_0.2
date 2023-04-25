@@ -136,7 +136,7 @@
                 method: 'POST',
                 type: 'POST',
                 success: function() {
-                    loadWorkflowCustomers();
+                    loadAttachments();
                 },
                 error: function(jqxhr, textStatus, errThrown){
                     console.log(textStatus);
@@ -148,7 +148,7 @@
         });
     </script>
     <script>
-        function loadWorkflowCustomers() {
+        function loadAttachments() {
             var id = $('#emailId').val();
 
             $.ajax({
@@ -167,8 +167,8 @@
                     });
                     // Unbind the click event before binding it again
                     $('.add-customers-btn').off('click').on('click', function() {
-                        var customerId = $(this).data('id');
-                        removeCustomer(customerId);
+                        var attachmentId = $(this).data('id');
+                        removeAttachment(attachmentId);
                     });
                 },
                 error: function () {
@@ -176,21 +176,21 @@
             });
         }
         $(document).ready(function () {
-            loadWorkflowCustomers();
+            loadAttachments();
         });
     </script>
     <script>
-        function removeCustomer(attachmentId) {
+        function removeAttachment(attachmentId) {
             $.ajax({
                 url:'/change/status/' + attachmentId,
                 type: 'GET',
                 contentType: 'application/json',
                 dataType: 'json',
                 success: function (customer) {
-                    loadWorkflowCustomers();
+                    loadAttachments();
                 },
                 error: function () {
-                    loadWorkflowCustomers();
+                    loadAttachments();
                 }
             });
         }

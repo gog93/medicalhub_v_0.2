@@ -27,7 +27,7 @@ public class WorkflowEmailController {
 
     @GetMapping(value = Routes.WorkflowEmail.CREATE, name = "create-workflow-email")
     public String create(@PathVariable("workflowId") Long workflowId, Model model) {
-model.addAttribute("attachments", mailAttachmentUploadService.findAllaAttachments() );
+        model.addAttribute("attachments", mailAttachmentUploadService.findAllaAttachments());
         model.addAttribute("workflowId", workflowId);
         model.addAttribute("action", "/workflow/" + workflowId + "/create-email");
         return CREATE_VIEW;

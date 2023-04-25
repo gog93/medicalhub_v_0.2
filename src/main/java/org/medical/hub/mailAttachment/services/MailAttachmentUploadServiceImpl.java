@@ -57,11 +57,6 @@ public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadServ
     }
 
     @Override
-    public Optional<MailAttachment> findStudentById(Long id) {
-        return mailAttachmentRepository.findById(id);
-    }
-
-    @Override
     public void changeStatus(Long id) {
         MailAttachment byId = mailAttachmentRepository.findById(id).get();
         byId.setStatus("canceled");

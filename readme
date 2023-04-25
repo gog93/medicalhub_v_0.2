@@ -1,0 +1,56 @@
+Beck-end part
+
+
+In create method at the package org.medical.hub.mail.WorkflowEmailController add to model addAttribute
+  model.addAttribute("attachments", mailAttachmentUploadService.findAllaAttachments());
+  model.addAttribute("workflowId", workflowId);
+In the package org.medical.hub.mail.UserEmails entity's add field
+
+    @JsonIgnore
+    @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MailAttachment> mailAttachment;
+
+In the package org.medical.hub.mail.WorkflowEmailService method
+     Optional<UserEmails> findById(Long userEmailId);
+In the package org.medical.hub.mail.WorkflowEmailServiceImpl method
+        //override
+     Optional<UserEmails> findById(Long userEmailId);
+
+   org.medical.hub.mail add mailAttachment
+    1 model
+        MailAttachment
+    2 repository
+    3 service
+        3.1 MailAttachmentUploadService
+           3.1.1 String uploadAttachment(MultipartFile file);
+           3.1.2 void deleteAttachment(Long attachmentId);
+           3.1.3 List<MailAttachment> findAllaAttachments();
+           3.1.4 List<MailAttachment> findAllaAttachmentsByStatus();
+           3.1.5 List<MailAttachment> findByEmailIdAndStatus(Long emailId);
+           3.1.6 void changeStatus(Long id);
+        3.2 MailAttachmentUploadServiceImpl
+            //override
+    4 controller
+        4.1 AttachmentUploadController
+        4.1.1 uploadAttachment(@RequestPart MultipartFile file)-> PostMapping, response /fileUpload url
+        4.1.2 ResponseEntity<String> removeAttachment (@PathVariable(name = "id") Long id)-> GetMapping, response /remove-attachment/{id} url
+        4.1.3 ResponseEntity<String> changeStatus(@PathVariable(name = "id") Long id)-> GetMapping, response /change/status/{id} url
+        4.1.4 List<MailAttachment> attachments()-> GetMapping, response /attachments" url
+        4.1.5  List<MailAttachment> findByUserEmailId(@PathVariable("emailId") Long emailId)-> GetMapping, response /{emailId}/attachments url
+
+
+
+Front-End part
+
+in workflowemail/create.html and workflowemail/edit.html add
+    <div class="attachment">
+         ......
+    </div>
+After click  <img src="/img/Add.png"  width="150px" class="img"> this image request /fileUpload post ajax
+ loadAttachment() -> request Get /attachments and take all attachments,
+ removeAttachment(attachmentId)-> after click x call this method , request Get '/remove-attachment/' + attachmentId and delete attachment with this id
+
+
+
+
+
