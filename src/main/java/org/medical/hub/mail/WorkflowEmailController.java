@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.UUID;
 
 @Controller
 @AllArgsConstructor
@@ -27,7 +28,9 @@ public class WorkflowEmailController {
 
     @GetMapping(value = Routes.WorkflowEmail.CREATE, name = "create-workflow-email")
     public String create(@PathVariable("workflowId") Long workflowId, Model model) {
+
         model.addAttribute("attachments", mailAttachmentUploadService.findAllaAttachments());
+        model.addAttribute("uuId",  UUID.randomUUID());
         model.addAttribute("workflowId", workflowId);
         model.addAttribute("action", "/workflow/" + workflowId + "/create-email");
         return CREATE_VIEW;
@@ -61,6 +64,7 @@ public class WorkflowEmailController {
 //        mailRequest.setSentAt(mailById.getSentAt());
 
         model.addAttribute("workflowId", workflowId);
+        model.addAttribute("uuId",  UUID.randomUUID());
         model.addAttribute("mailId", mailId);
         model.addAttribute("action", "/workflow/" + workflowId + "/mail/" + mailId + "/update");
         model.addAttribute("workflowEmail", mailRequest);

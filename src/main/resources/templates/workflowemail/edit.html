@@ -58,6 +58,8 @@
                                         <label for="import">
                                             <img src="/img/Add.png"  width="150px" class="img">
                                         </label>
+                                        <input th:value="${uuId}" id="uuId" hidden />
+
                                         <input th:name="fileName" class="inputAt"  type="file" id="import" hidden />
                                         <table id="workflowCustomers" class="table">
                                             <thead>
@@ -120,6 +122,7 @@
         </script>
     <script>
         $("#import").on("change", function(){
+            var uuId = $("#uuId").val();
 
             var formTag = $("#create-workflow-email")[0];
             var formData = new FormData(formTag);
@@ -127,7 +130,7 @@
 
 
             $.ajax({
-                url: "/fileUpload",
+                url: "/fileUpload?uuId="+uuId,
                 data:formData,
                 type:"post",
                 cache: false,
@@ -150,9 +153,10 @@
     <script>
         function loadAttachments() {
             var id = $('#emailId').val();
+            var uuId = $("#uuId").val();
 
             $.ajax({
-                url: '/' + id + '/attachments',
+                url: '/' + id + '/attachments?uuId='+uuId,
                 type: 'GET',
                 success: function (data) {
                     var $workflowCustomersTable = $('#workflowCustomers tbody');

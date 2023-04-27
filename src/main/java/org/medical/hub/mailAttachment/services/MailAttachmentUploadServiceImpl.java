@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadService {
@@ -25,14 +25,14 @@ public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadServ
     WorkflowEmailService emailService;
 
     @Override
-    public String uploadAttachment(MultipartFile file) {
+    public String uploadAttachment(MultipartFile file, UUID uuId) {
         try {
             if (file.isEmpty()) {
                 throw new NullAttachmentException("File or emailId is null");
             }
             String fileName = file.getOriginalFilename();
             byte[] uploadedFile = file.getInputStream().readAllBytes();
-            MailAttachment savedMailAttachment = mailAttachmentRepository.save(new MailAttachment(fileName, uploadedFile, "draft"));
+            MailAttachment savedMailAttachment = mailAttachmentRepository.save(new MailAttachment(1L, fileName, uploadedFile, "draft", uuId));
 
             return "File id: " + savedMailAttachment.getId();
         } catch (IOException e) {
@@ -43,11 +43,6 @@ public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadServ
 
     public List<MailAttachment> findAllaAttachments() {
         return mailAttachmentRepository.findAll();
-    }
-
-    @Override
-    public List<MailAttachment> findAllaAttachmentsByStatus() {
-        return mailAttachmentRepository.findByStatus("draft");
     }
 
     @Override
@@ -62,17 +57,23 @@ public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadServ
         byId.setStatus("canceled");
         mailAttachmentRepository.save(byId);
     }
-    public   List<MailAttachment> findByEmailIdAndStatus(Long emailId){
 
-        List<MailAttachment> mailAttachment =new ArrayList<>();
-        List<MailAttachment> allaAttachmentsByStatus = findAllaAttachmentsByStatus();
-        for (MailAttachment attachment: emailService.findById(emailId).get().getMailAttachment()){
-            if (attachment.getStatus().equals("sent") ){
+    public List<MailAttachment> findByEmailIdAndStatus(Long emailId, UUID uuid) {
+
+        List<MailAttachment> mailAttachment = new ArrayList<>();
+        List<MailAttachment> allaAttachmentsByStatus = findByUUId(uuid);
+        for (MailAttachment attachment : emailService.findById(emailId).get().getMailAttachment()) {
+            if (attachment.getStatus().equals("sent")) {
                 mailAttachment.add(attachment);
             }
         }
         mailAttachment.addAll(allaAttachmentsByStatus);
         return mailAttachment;
+    }
+
+    @Override
+    public List<MailAttachment> findByUUId(UUID uuid) {
+        return mailAttachmentRepository.findByUuid(uuid);
     }
 
 }

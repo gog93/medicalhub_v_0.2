@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.medical.hub.mail.UserEmails;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -22,11 +25,12 @@ public class MailAttachment {
     @Column(nullable = false)
     private byte[] file;
     private String status;
+    private UUID uuid;
 
-    public MailAttachment(  String fileName, byte[] uploadedFile, String status) {
+    public MailAttachment(String fileName, byte[] uploadedFile, String status) {
         this.fileName = fileName;
         this.file = uploadedFile;
-        this.status=status;
+        this.status = status;
     }
 
 }

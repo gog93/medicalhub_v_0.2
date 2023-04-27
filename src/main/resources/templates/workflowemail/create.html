@@ -60,6 +60,7 @@
                                             <img src="/img/Add.png"  width="150px" class="img">
                                         </label>
                                     <input th:name="fileName" class="inputAt"  type="file" id="import" hidden />
+                                    <input th:value="${uuId}" id="uuId" hidden />
                                     <table id="workflowCustomers" class="table">
                                         <thead>
 
@@ -133,7 +134,7 @@
                         .then(data => {
                             console.log(data); // Handle the response from the server here
                             const attachmentsDiv = document.querySelector('#attachments');
-                            fetch('/attachments')
+                            fetch('/2/attachments')
                                 .then(response => response.text())
                                 .then(html => attachmentsDiv.innerHTML = html)
                                 .catch(error => console.error(error));
@@ -147,13 +148,14 @@
             $("#import").on("change", function(){
 
                 var formTag = $("#create-workflow-email")[0];
+                var uuId = $("#uuId").val();
                 var formData = new FormData(formTag);
                 formData.append("file", $(this)[0].files[0]);
 
 
                 $.ajax({
-                    url: "/fileUpload",
-                    data:formData,
+                    url: "/fileUpload?uuId="+uuId,
+                    data: formData,
                     type:"post",
                     cache: false,
                     contentType: false,
@@ -174,8 +176,10 @@
         </script>
         <script>
             function loadAttachment() {
+                var uuId = $("#uuId").val();
+
                 $.ajax({
-                    url: '/attachments',
+                    url: '/attachments?uuid='+uuId,
                     type: 'GET',
                     success: function (data) {
                         var $workflowCustomersTable = $('#workflowCustomers tbody');
