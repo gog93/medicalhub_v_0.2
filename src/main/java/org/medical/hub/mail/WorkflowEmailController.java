@@ -37,7 +37,7 @@ public class WorkflowEmailController {
     }
 
     @PostMapping(value = Routes.WorkflowEmail.STORE, name = "save-workflow-email")
-    public String save(@PathVariable("workflowId") Long workflowId,
+    public String save(@PathVariable("workflowId") Long workflowId,@RequestParam(name = "uuId") UUID uuId,
                        @Valid @ModelAttribute("workflowEmail") CreateMailRequest workflow,
                        BindingResult bindingResult,
                        RedirectAttributes ra) throws ParseException {
@@ -46,7 +46,7 @@ public class WorkflowEmailController {
             return CREATE_VIEW;
         }
 
-        this.workflowEmailService.save(workflowId, workflow);
+        this.workflowEmailService.save(workflowId, workflow,uuId);
         ra.addFlashAttribute(Common.SUCCESS_MESSAGE, "Email added to workflow successfully.");
         return Common.REDIRECT + Routes.Workflow.GET + "/" + workflowId;
     }
@@ -73,6 +73,8 @@ public class WorkflowEmailController {
 
     @PostMapping(value = Routes.WorkflowEmail.UPDATE, name = "update-workflow-email")
     public String updateWorkflowEmail(@PathVariable("workflowId") Long workflowId,
+                                      @RequestParam(value = "uuId") UUID uuId,
+
                                       @PathVariable("mailId") Long mailId,
                                       @Valid @ModelAttribute("workflowEmail") CreateMailRequest workflow,
                                       BindingResult bindingResult,
@@ -82,7 +84,7 @@ public class WorkflowEmailController {
             return EDIT_VIEW;
         }
 
-        this.workflowEmailService.update(workflowId, mailId, workflow);
+        this.workflowEmailService.update(workflowId, mailId, workflow, uuId);
         ra.addFlashAttribute(Common.SUCCESS_MESSAGE, "Email added to workflow successfully.");
         return Common.REDIRECT + Routes.Workflow.GET + "/" + workflowId;
     }

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -26,8 +27,8 @@ public class WorkflowEmailServiceImpl implements WorkflowEmailService {
 //    private final LoggedinUser loggedinUser;
 
     @Override
-    public void save(Long workflowId, CreateMailRequest request) throws ParseException {
-        List<MailAttachment> draft = attachmentService.findByStatus("draft");
+    public void save(Long workflowId, CreateMailRequest request, UUID uuid) throws ParseException {
+        List<MailAttachment> draft = attachmentService.findByUuid(uuid);
 
         logger.info("Saving the mail details for workflow.", request);
 //
@@ -63,9 +64,9 @@ public class WorkflowEmailServiceImpl implements WorkflowEmailService {
     }
 
     @Override
-    public void update(Long workflowId, Long mailId, CreateMailRequest request) throws ParseException {
+    public void update(Long workflowId, Long mailId, CreateMailRequest request, UUID uuid) throws ParseException {
         logger.info("Saving the mail details for workflow.", request);
-
+        List<MailAttachment> byUuid = attachmentService.findByUuid(uuid);
         String patter = "MM/dd/yyyy hh:mm a";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(patter);
         Date parse = simpleDateFormat.parse(request.getSentAt());
@@ -77,9 +78,13 @@ public class WorkflowEmailServiceImpl implements WorkflowEmailService {
         email.setCreatedAt(System.currentTimeMillis());
         email.setUpdatedAt(System.currentTimeMillis());
         email.setStatus(MailStatus.IN_ANTICIPATION);
-        email.setWorkflow(workflowService.findById(workflowId));
-        email.setSentAt(sentAt);
+//        email.setWorkflow(workflowService.findById(workflowId));
+//        email.setSentAt(sentAt);
+        for (MailAttachment mailAttachment : byUuid) {
+            mailAttachment.setStatus("sent");
 
+        }
+        email.getMailAttachment().addAll(byUuid);
         mailRepository.save(email);
 
         logger.info("Email saved for workflow.");

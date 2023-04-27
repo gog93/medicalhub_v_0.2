@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +16,7 @@ import java.util.UUID;
 public class MailAttachment {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String fileName;
     @Column(nullable = false)
@@ -27,10 +24,11 @@ public class MailAttachment {
     private String status;
     private UUID uuid;
 
-    public MailAttachment(String fileName, byte[] uploadedFile, String status) {
+    public MailAttachment(String fileName, byte[] uploadedFile, String status,UUID uuid) {
         this.fileName = fileName;
         this.file = uploadedFile;
         this.status = status;
+        this.uuid = uuid;
     }
 
 }

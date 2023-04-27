@@ -51,6 +51,12 @@ After click  <img src="/img/Add.png"  width="150px" class="img"> this image requ
  removeAttachment(attachmentId)-> after click x call this method , request Get '/remove-attachment/' + attachmentId and delete attachment with this id
 
 
-
+              CHANGES!!!
+Add     private UUID uuid field in MailAttachment entity
+Add     List<MailAttachment> findByUUId(UUID uuid) method In MailAttachmentUploadService //override MailAttachmentUploadServiceImpl
+Add  @RequestParam(value = "uuId") UUID uuId in the  WorkflowEmailController save and updateWorkflowEmail methods
+Add  @RequestParam(value = "uuId") UUID uuId in the AttachmentUploadController uploadAttachment, attachments,findByUserEmailId methods
+change in workflowemail/create.html's form action
+change in workflowemail/edit.html's form action
 
 

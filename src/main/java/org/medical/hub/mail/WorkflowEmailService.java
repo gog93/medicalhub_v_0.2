@@ -2,6 +2,7 @@ package org.medical.hub.mail;
 
 import java.text.ParseException;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface WorkflowEmailService {
 
@@ -12,7 +13,7 @@ public interface WorkflowEmailService {
      * @param request
      * @throws ParseException
      */
-    void save(Long workflowId, CreateMailRequest request) throws ParseException;
+    void save(Long workflowId, CreateMailRequest request, UUID uuid) throws ParseException;
 
     /**
      * Get the mail of workflow
@@ -30,7 +31,7 @@ public interface WorkflowEmailService {
      * @param request
      * @throws ParseException
      */
-    void update(Long workflowId, Long mailId, CreateMailRequest request) throws ParseException;
+    void update(Long workflowId, Long mailId, CreateMailRequest request, UUID uuid) throws ParseException;
 
     /**
      * Delete the workflow mail details

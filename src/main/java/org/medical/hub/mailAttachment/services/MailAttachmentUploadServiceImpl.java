@@ -32,7 +32,7 @@ public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadServ
             }
             String fileName = file.getOriginalFilename();
             byte[] uploadedFile = file.getInputStream().readAllBytes();
-            MailAttachment savedMailAttachment = mailAttachmentRepository.save(new MailAttachment(1L, fileName, uploadedFile, "draft", uuId));
+            MailAttachment savedMailAttachment = mailAttachmentRepository.save(new MailAttachment( fileName, uploadedFile, "draft", uuId));
 
             return "File id: " + savedMailAttachment.getId();
         } catch (IOException e) {
@@ -66,8 +66,11 @@ public class MailAttachmentUploadServiceImpl implements MailAttachmentUploadServ
             if (attachment.getStatus().equals("sent")) {
                 mailAttachment.add(attachment);
             }
+        } for (MailAttachment attachment : allaAttachmentsByStatus) {
+            if (attachment.getStatus().equals("draft")) {
+                mailAttachment.add(attachment);
+            }
         }
-        mailAttachment.addAll(allaAttachmentsByStatus);
         return mailAttachment;
     }
 

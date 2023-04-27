@@ -28,11 +28,13 @@
                     </div>
                     <div class="card-body">
                         <input type="hidden"  id="emailId" th:value="${mailId}" >
+                        <input th:value="${uuId}" id="uuId" hidden />
+
                         <form th:object="${workflowEmail}"
                               name="create-workflow-email"
                               id="create-workflow-email"
                               method="POST"
-                              th:action="${action}" >
+                              th:action="${action +'?uuId=' +uuId}" >
 
                             <div id="row-type">
                                 <div class="row">
@@ -58,7 +60,6 @@
                                         <label for="import">
                                             <img src="/img/Add.png"  width="150px" class="img">
                                         </label>
-                                        <input th:value="${uuId}" id="uuId" hidden />
 
                                         <input th:name="fileName" class="inputAt"  type="file" id="import" hidden />
                                         <table id="workflowCustomers" class="table">
