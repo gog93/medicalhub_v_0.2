@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping
+@CrossOrigin(origins = "http://localhost")
+
 public class AttachmentUploadController {
 
     @Autowired
