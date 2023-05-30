@@ -32,8 +32,8 @@ public class GeneratorController {
     @PostMapping
     public String generator1(Model model, Generator generator, @ModelAttribute(value = "file") MultipartFile file,
                              @RequestParam(value = "zip") MultipartFile zip) throws Exception {
-       zipUploadService.uploadAndExtractFiles(zip);
-utilGenerator.changeHtmlHeader(generator.getHtmlHeader());
+        zipUploadService.uploadAndExtractFiles(zip);
+        utilGenerator.changeHtmlHeader(generator.getHtmlHeader());
         if (!file.isEmpty()) {
             // Get the file name
             String fileName = file.getOriginalFilename();
@@ -41,7 +41,7 @@ utilGenerator.changeHtmlHeader(generator.getHtmlHeader());
             // Specify the directory to save the file
 //            String directory = "C:\\myProjects\\medicalhub_v_0.2\\exel";
             String directory = generator.getPathForExel();
-            String path = directory + "\\" + fileName;
+            String path = directory + "/" + fileName;
             // Create the destination file
             File destinationFile = new File(path);
 

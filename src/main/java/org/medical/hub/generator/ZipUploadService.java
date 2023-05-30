@@ -18,8 +18,7 @@ import java.util.zip.ZipInputStream;
 @Service
 public class ZipUploadService {
 //    @Value("${upload.path}")
-    private String uploadPath="C:\\myProjects\\medicalhub_v_0.2\\generatedProject\\src\\main\\resources\\static";
-
+    private String uploadPath="/home/gohar2/IdeaProjects/medicalhub_v_0.2/generatedProject/src/main/resources/static";
     public boolean uploadAndExtractFiles(MultipartFile file) {
         if (file.isEmpty()) {
             // Handle empty file case
