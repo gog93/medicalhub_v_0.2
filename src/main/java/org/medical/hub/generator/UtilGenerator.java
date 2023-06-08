@@ -1,15 +1,17 @@
 package org.medical.hub.generator;
 
+import lombok.RequiredArgsConstructor;
 import org.medical.hub.generator.model.Generator;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
 
 @Service
+@RequiredArgsConstructor
 public class UtilGenerator {
+    private final FormsGenerator formsGenerator;
 
     public void write(Generator generator) {
         String folder = "generatedProject/src/main/java/com/example/generatedproject";
@@ -55,25 +57,7 @@ public class UtilGenerator {
                 "}\r\n";
         String entity =
                 "package " + pac + ";\r\n" +
-                        "import jakarta.persistence.*;\r\n" +
-                        "@Entity\r\n" +
-                        "@Table(name = \"" + generator.getEntityTableName() + "\")\r\n" +
-                        "public class " + generator.getEntityName() + " {\r\n" +
-                        "@Id\r\n" +
-                        "@GeneratedValue(strategy = GenerationType.SEQUENCE)\r\n" +
-                        "private Long id;\r\n" +
-                        "private String surveyTwoId;\r\n" +
-                        "\r\n" +
-                        "	public " + generator.getEntityName() + "() {\r\n" +
-                        "	}\r\n" +
-                        "	public Long getId() {\r\n" +
-                        "		return this.id;\r\n" +
-                        "	}\r\n" +
-                        "	public void setId(Long id) {\r\n" +
-                        "		this.id = id;\r\n" +
-                        "	}\r\n" +
-
-                        "}\r\n";
+                        "import jakarta.persistence.*;\r\n" + formsGenerator.минус_класс_для_таблицъ();
         String repository = "package " + pac + ";\r\n" +
                 "import org.springframework.data.jpa.repository.JpaRepository;\n" +
                 "import org.springframework.data.jpa.repository.JpaSpecificationExecutor;\n" +
@@ -135,43 +119,44 @@ public class UtilGenerator {
         Files.write(file.toPath(), fileBytes);
         return file;
     }
-public void changeHtmlHeader(String header){
-    String filePath = "generatedProject/src/main/resources/templates/ecrf1.html";
-    String markerWord = "<head>";
 
-    try {
-        // Read the contents of the file
-        File file = new File(filePath);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line).append("\n");
+    public void changeHtmlHeader(String header) {
+        String filePath = "generatedProject/src/main/resources/templates/ecrf1.html";
+        String markerWord = "<head>";
+
+        try {
+            // Read the contents of the file
+            File file = new File(filePath);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            reader.close();
+            String fileContent = stringBuilder.toString();
+
+            // Locate the marker word
+            int markerIndex = fileContent.indexOf(markerWord);
+
+            if (markerIndex != -1) {
+                // Insert the custom sentence after the marker word
+                StringBuilder modifiedContent = new StringBuilder(fileContent);
+                modifiedContent.insert(markerIndex + markerWord.length(), " " + header);
+
+                // Write the modified content back to the file
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                writer.write(modifiedContent.toString());
+                writer.close();
+
+                System.out.println("Custom sentence added successfully.");
+            } else {
+                System.out.println("Marker word not found in the file.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        reader.close();
-        String fileContent = stringBuilder.toString();
-
-        // Locate the marker word
-        int markerIndex = fileContent.indexOf(markerWord);
-
-        if (markerIndex != -1) {
-            // Insert the custom sentence after the marker word
-            StringBuilder modifiedContent = new StringBuilder(fileContent);
-            modifiedContent.insert(markerIndex + markerWord.length(), " " + header);
-
-            // Write the modified content back to the file
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write(modifiedContent.toString());
-            writer.close();
-
-            System.out.println("Custom sentence added successfully.");
-        } else {
-            System.out.println("Marker word not found in the file.");
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-}
 }
 
 

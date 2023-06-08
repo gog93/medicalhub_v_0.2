@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,8 +25,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.medical.hub.generator.model.Generator;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 @Service
 public class FormsGenerator {
 	private static final String N_G = "-99";
@@ -865,7 +862,7 @@ public class FormsGenerator {
 	private void плюс_метод_гет() {
 	}
 
-	private void минус_метод_гет(String имя_метода, String имя_класса) {
+	public String минус_метод_гет(String имя_метода, String имя_класса) {
 		String get_method =
 				"		@GetMapping(\"/"  + имя_метода + "/{surveyTwoId}\")\r\n" +
 						"		public String "  + имя_метода + "(@PathVariable(\"surveyTwoId\") String surveyTwoId, ModelMap map) {\r\n" +
@@ -875,7 +872,7 @@ public class FormsGenerator {
 						"			}\r\n" +
 						"			return \""  + имя_метода + "\";\r\n" +
 						"		}\r\n";
-		System.out.println(get_method);
+		return get_method;
 	}
 
 	StringBuilder база_данних = new StringBuilder();
@@ -1001,9 +998,8 @@ public class FormsGenerator {
 		return Arrays.asList(идентификатор.split("_")).stream().map(a -> (a.charAt(0) + "").toUpperCase() + a.substring(1)).collect(Collectors.joining());
 	}
 
-	private void минус_класс_для_таблицъ() {
-		класс_для_таблицъ.append("}\r\n");
-		System.out.println(класс_для_таблицъ);
+	public StringBuilder минус_класс_для_таблицъ() {
+	return 	класс_для_таблицъ.append("}\r\n");
 	}
 
 	private void минус_таблица(String имя_таблиц) {
@@ -1303,25 +1299,25 @@ public class FormsGenerator {
 //		System.out.println("Done!");
 //	}
 //
-	public void ecrf_generation(Integer index, boolean keep_run, File pathname, String outputFolder) throws Exception {
+	public void ecrf_generation(Integer index, boolean keep_run, File pathname, String outputFolder, Generator generator) throws Exception {
 //		FileTime lastModifiedTime = Files.getLastModifiedTime(Paths.get(pathname));
 
 			//		String pathname = "C:\\Users\\agklein\\Desktop\\to-delete\\Kopie von Forms_DataDictionary_2020_30_05_LM_JV_2020_06_23-1.xlsx";
 //			плюс_документ(index);
 			прочитать_ексел_файл(pathname, false, 0, переводчик, processor);
-//			for (String идентификатор : all_identifier_for_db) {
-//				плюс_таблица(идентификатор, table_name_to_generate + index);
-//				плюс_метод_гет();
-//				плюс_класс_для_таблицъ(идентификатор, table_name_to_generate_java_class + index, class_name + index, index);
-//				плюс_метод_пост();
-//			}
+			for (String идентификатор : all_identifier_for_db) {
+				плюс_таблица(идентификатор, table_name_to_generate + index);
+				плюс_метод_гет();
+				плюс_класс_для_таблицъ(идентификатор, generator.getEntityName() + index, generator.getEntityName() + index, index);
+				плюс_метод_пост();
+			}
 //			минус_строка();
 //			минус_форма(index);
 //			минус_документ(index);
-//			минус_таблица(table_name_to_generate + index);
-//			минус_класс_для_таблицъ();
-//			минус_метод_гет(name_get_method_for_generation + index, class_name + index);
-//			минус_метод_пост(name_get_method_for_generation + index, class_name + index);
+			минус_таблица(generator.getEntityName() + index);
+			минус_класс_для_таблицъ();
+			минус_метод_гет(generator.getMethodName() + index,generator.getEntityName() + index);
+			минус_метод_пост(generator.getMethodName2() + index, generator.getEntityName() + index);
 //
 //			try (PrintWriter out = new PrintWriter(outputFolder + "ecrf" + index + ".html")) {
 //				out.println(документ.toString().replace("<label for=\"sel1\">null</label>", "").replace("<label for=\"sel1\"></label>", "").replace("&", "&amp;"));

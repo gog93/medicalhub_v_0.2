@@ -50,7 +50,7 @@ utilGenerator.changeHtmlHeader(generator.getHtmlHeader());
             // Rest of your code...
 //            String folderLocation = "C:\\myProjects\\medicalhub_v_0.2\\generatedProject\\src\\main\\resources\\templates\\";
             String folderLocation = generator.getThymeleafTemplateFolder();
-            formsGenerator.ecrf_generation(1, true, destinationFile, folderLocation);
+            formsGenerator.ecrf_generation(1, true, destinationFile, folderLocation, generator);
             utilGenerator.write(generator);
             model.addAttribute("generator", generator);
             ZipExample.zip();
